@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "task-terminal"
-version = "0.1.0"
+version = "0.2.0"
 description = "Task Terminal - A local-first developer tool for generating and tracking task IDs"
 readme = "README.md"
 requires-python = ">=3.9"

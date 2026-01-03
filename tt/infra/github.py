@@ -184,3 +184,75 @@ class GitHubIntegration:
                 )
 
         return unlinked
+
+    def find_all_task_ids_in_repo(self) -> List[Dict[str, Any]]:
+        """Scan all branches and PRs for task IDs.
+
+        Returns:
+            List of dicts with keys: task_id, pr_number, title, body, branch, repo
+        """
+        repo = self.get_current_repo()
+        if repo is None:
+            return []
+
+        found_tasks = {}
+        task_pattern = re.compile(r'\btt-(\d+)\b', re.IGNORECASE)
+
+        # Scan PR titles and branches
+        output = self._run_gh_command(
+            [
+                "pr",
+                "list",
+                "--repo",
+                repo,
+                "--json",
+                "number,title,body,headRefName",
+                "--limit",
+                "100",
+                "--state",
+                "all",
+            ]
+        )
+
+        if output:
+            try:
+                prs = json.loads(output)
+                for pr in prs:
+                    branch = pr.get("headRefName", "")
+                    title = pr.get("title", "")
+                    
+                    # Check branch name
+                    matches = task_pattern.findall(branch)
+                    for match in matches:
+                        task_id = f"tt-{match}"
+                        if task_id not in found_tasks:
+                            found_tasks[task_id] = {
+                                "task_id": task_id,
+                                "pr_number": pr.get("number"),
+                                "title": title,
+                                "body": pr.get("body", ""),
+                                "branch": branch,
+                                "repo": repo,
+                            }
+
+                    # Check title
+                    matches = task_pattern.findall(title)
+                    for match in matches:
+                        task_id = f"tt-{match}"
+                        if task_id not in found_tasks:
+                            found_tasks[task_id] = {
+                                "task_id": task_id,
+                                "pr_number": pr.get("number"),
+                                "title": title,
+                                "body": pr.get("body", ""),
+                                "branch": branch,
+                                "repo": repo,
+                            }
+            except json.JSONDecodeError:
+                pass
+
+        # Sort by task ID number
+        return sorted(
+            list(found_tasks.values()),
+            key=lambda x: int(x["task_id"].split('-')[1])
+        )
