@@ -22,12 +22,16 @@ Task Terminal (tt) is a polished terminal application that helps developers main
 - Python 3.9 or higher
 - [GitHub CLI](https://cli.github.com/) (optional, for PR features)
 
-### Install from Source
+### Install from PyPI
 
 ```bash
-git clone https://github.com/yourusername/TerminalTask.git
-cd TerminalTask
-pip install -e .
+pip install task-terminal
+```
+
+Or with [uv](https://github.com/astral-sh/uv):
+
+```bash
+uv pip install task-terminal
 ```
 
 ### Setup GitHub CLI (Optional)
@@ -47,27 +51,33 @@ gh auth login
 
 ## Quick Start
 
-1. **Install tt globally**
+1. **Install Task Terminal**
 
    ```bash
-   pip install -e .
+   pip install task-terminal
    ```
 
-2. **Navigate to your project**
-
-   ```bash
-   cd ~/projects/your-repo
-   ```
-
-3. **Launch Task Terminal**
+2. **Launch the application**
 
    ```bash
    tt
    ```
 
+   If `tt` command is not found, try:
+   ```bash
+   python -m tt.main
+   ```
+
+3. **Navigate to your project (for PR features)**
+
+   ```bash
+   cd ~/projects/your-repo
+   tt
+   ```
+
 4. **Create your first task**
    - Navigate to "Create Task" with arrow keys
-   - Press Enter or 'g' to generate a task ID
+   - Press Enter to generate a task ID
    - The ID (e.g., `tt-1`) is copied to your clipboard
 
 5. **Use the task ID in your workflow**
@@ -78,10 +88,10 @@ gh auth login
    git push origin feature/tt-1-implement-auth
    ```
 
-6. **Link the PR**
-   - Create a PR on GitHub
+6. **Import and link PRs**
+   - Create a PR on GitHub with tt-1 in the branch name or title
    - Open tt and navigate to "PR Inbox"
-   - Select your PR and press Enter or 'a' to attach
+   - Press 'l' or Enter on tt-1 to import and link the PR
 
 ## 📖 Usage Guide
 
@@ -101,7 +111,7 @@ Navigate with **arrow keys** and select with **Enter**:
 
 **Shortcuts:**
 
-- `Enter` or `g` - Generate a new task ID
+- `Enter` - Generate a new task ID
 - `Escape` - Go back to main menu
 
 The generated task ID is automatically copied to your clipboard for immediate use.
@@ -120,28 +130,33 @@ View all your tasks with their status, creation date, and linked PRs.
 
 ### PR Inbox Screen
 
-Automatically scans for PRs in the current repository that match your open task IDs.
+Automatically scans for PRs in the current repository and detects task IDs in branch names and PR titles.
+
+**Features:**
+- **Import** - Task IDs found in the repo but not in your local database
+- **Link** - PRs for existing tasks that need to be linked
 
 **Shortcuts:**
 
-- `Arrow keys` - Navigate PRs
-- `Enter` or `a` - Attach highlighted PR to its task
-- `i` - Ignore the highlighted PR (session only)
-- `r` - Refresh and rescan for PRs
+- `Arrow keys` - Navigate items
+- `Enter` or `l` - Link PR or import task ID
+- `i` - Ignore the highlighted item (session only)
+- `r` - Refresh and rescan the repository
 - `Escape` - Go back to main menu
 
 ## 🎯 Workflow Example
 
 ```bash
-# 1. Start in your project directory
-cd ~/projects/my-api
+# 1. Install Task Terminal
+pip install task-terminal
 
 # 2. Generate a task ID
 tt
 # Navigate to "Create Task", press Enter
 # Result: tt-42 (copied to clipboard)
 
-# 3. Create a branch with the task ID
+# 3. Navigate to your project and create a branch
+cd ~/projects/my-api
 git checkout -b feature/tt-42-add-authentication
 
 # 4. Implement your feature
@@ -150,18 +165,18 @@ git add .
 git commit -m "Add JWT authentication for API"
 git push origin feature/tt-42-add-authentication
 
-# 5. Create a PR on GitHub
+# 5. Create a PR on GitHub (with task ID in title or branch)
 gh pr create --title "tt-42: Add authentication" --body "Implements JWT auth"
 
-# 6. Link the PR in tt
+# 6. Import and link the task in tt
 tt
 # Navigate to "PR Inbox"
-# Select the PR with arrow keys
-# Press Enter to attach
+# You'll see "Import | tt-42 | #123 | Add authentication"
+# Press 'l' or Enter to import and link
 
 # 7. View your tasks
 # Navigate to "Tasks"
-# See tt-42 status: linked, with PR #123
+# See tt-42 status: linked, with PR #123 and title
 # Press 'o' to open the PR in your browser
 ```
 
@@ -171,7 +186,7 @@ tt
 
 ```bash
 # Clone the repository
-git clone https://github.com/suamnthaka/TerminalTask.git
+git clone https://github.com/sumanthaka/TerminalTask.git
 cd TerminalTask
 
 # Create a virtual environment
@@ -180,6 +195,12 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 # Install in development mode with dev dependencies
 pip install -e ".[dev]"
+```
+
+### Run from Source
+
+```bash
+tt
 ```
 
 ### Code Style
